@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">mta-nyc-offline</string>
+    <string name="title_activity_main">mta-nyc-offline</string>
+    <string name="package_name">com.mta.nyc.offline</string>
+    <string name="custom_url_scheme">com.mta.nyc.offline</string>
+</resources>

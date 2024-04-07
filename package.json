@@ -1,0 +1,26 @@
+{
+  "name": "mta-nyc-offline",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "script": "npx ts-node ./script.ts",
+    "sync": "npx cap sync",
+    "run_android": "JAVA_HOME=`/usr/libexec/java_home -v 17` npx cap run android",
+    "build_android": "export JAVA_HOME=`/usr/libexec/java_home -v 17`; cd android && ./gradlew assembleDebug && cd ..; cp android/app/build/outputs/apk/debug/app-debug.apk ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@capacitor/cli": "^5.7.4",
+    "@types/decompress": "^4.2.7",
+    "@types/node": "^20.12.4"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.7.4",
+    "@capacitor/core": "^5.7.4",
+    "@types/jsdom": "^21.1.6",
+    "decompress": "^4.2.1",
+    "glob": "^10.3.12",
+    "jsdom": "^24.0.0"
+  }
+}

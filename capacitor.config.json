@@ -1,0 +1,8 @@
+{
+  "appId": "com.mta.nyc.offline",
+  "appName": "mta-nyc-offline",
+  "webDir": "final_output",
+  "server": {
+    "androidScheme": "https"
+  }
+}
