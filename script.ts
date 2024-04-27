@@ -88,39 +88,42 @@ const FOLDER_FINAL_OUTPUT = "./final_output";
 const makeFileNameRelative = (path: string) => "./" + path;
 const PROMISE_BATCH_SIZE = 20;
 
+let paths: string[] = [];
+let htmlFiles: string[] = [];
+
 (async () => {
     try {
-        // // STEP ZERO: cleanup
-        // if (existsSync(FOLDER_INTERMEDIATES)) rmSync(FOLDER_INTERMEDIATES, { force: true, recursive: true })
+        // STEP ZERO: cleanup
+        if (existsSync(FOLDER_INTERMEDIATES)) rmSync(FOLDER_INTERMEDIATES, { force: true, recursive: true })
 
-        // // STEP ONE: unzip
-        // const zipFile = glob.globSync("*.zip", { nodir: true }).at(0);
-        // if (!zipFile) {
-        //     console.log("no zip file!")
-        //     return
-        // }
-        // await decompress(makeFileNameRelative(zipFile), FOLDER_UNZIPPED)
+        // STEP ONE: unzip
+        const zipFile = glob.globSync("*.zip", { nodir: true }).at(0);
+        if (!zipFile) {
+            console.log("no zip file!")
+            return
+        }
+        await decompress(makeFileNameRelative(zipFile), FOLDER_UNZIPPED)
 
-        // // STEP 2: Inline dependencies
-        // cpSync(FOLDER_UNZIPPED, FOLDER_INLINED, { recursive: true });
-        // let paths = glob.globSync(FOLDER_INLINED + '/**/*', { nodir: true });
-        // let htmlFiles = paths.filter(path => path.endsWith(".html"))
-        // totalHtmlFileCount = htmlFiles.length
-        // htmlFilesDoneSoFar = 0
-        // await batchedPromiseAll(htmlFiles, PROMISE_BATCH_SIZE, (file) => inlineRequirementsAndReplaceStyles(makeFileNameRelative(file)))
+        // STEP 2: Inline dependencies
+        cpSync(FOLDER_UNZIPPED, FOLDER_INLINED, { recursive: true });
+        paths = glob.globSync(FOLDER_INLINED + '/**/*', { nodir: true });
+        htmlFiles = paths.filter(path => path.endsWith(".html"))
+        totalHtmlFileCount = htmlFiles.length
+        htmlFilesDoneSoFar = 0
+        await batchedPromiseAll(htmlFiles, PROMISE_BATCH_SIZE, (file) => inlineRequirementsAndReplaceStyles(makeFileNameRelative(file)))
 
-        // // STEP 3: Replace strings
-        // cpSync(FOLDER_INLINED, FOLDER_STRING_REPLACED, { recursive: true });
-        // paths = glob.globSync(FOLDER_STRING_REPLACED + '/**/*', { nodir: true });
-        // htmlFiles = paths.filter(path => path.endsWith(".html"))
-        // totalHtmlFileCount = htmlFiles.length
-        // htmlFilesDoneSoFar = 0
-        // await batchedPromiseAll(htmlFiles, PROMISE_BATCH_SIZE, (file) => replaceStrings(makeFileNameRelative(file)))
+        // STEP 3: Replace strings
+        cpSync(FOLDER_INLINED, FOLDER_STRING_REPLACED, { recursive: true });
+        paths = glob.globSync(FOLDER_STRING_REPLACED + '/**/*', { nodir: true });
+        htmlFiles = paths.filter(path => path.endsWith(".html"))
+        totalHtmlFileCount = htmlFiles.length
+        htmlFilesDoneSoFar = 0
+        await batchedPromiseAll(htmlFiles, PROMISE_BATCH_SIZE, (file) => replaceStrings(makeFileNameRelative(file)))
 
         // STEP 4a: Index the stops in the non-index html files
         const filenameToStopsDict: Record<string, string[]> = {}
-        let paths = glob.globSync(FOLDER_STRING_REPLACED + '/**/*', { nodir: true });
-        let htmlFiles = paths.filter(path => path.endsWith(".html") && !path.endsWith("index.html"))
+        paths = glob.globSync(FOLDER_STRING_REPLACED + '/**/*', { nodir: true });
+        htmlFiles = paths.filter(path => path.endsWith(".html") && !path.endsWith("index.html"))
         totalHtmlFileCount = htmlFiles.length
         htmlFilesDoneSoFar = 0
         await batchedPromiseAll(htmlFiles, PROMISE_BATCH_SIZE, (file) => indexStops(makeFileNameRelative(file), filenameToStopsDict))
